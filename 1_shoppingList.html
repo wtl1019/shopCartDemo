@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>购物车列表</title>
+    <link type="text/css" rel="stylesheet" href="http://storage.jd.com/1.3.3/zr/css/cdn_zr.min.css" />
+    <link rel="stylesheet" href="css/main.css">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/shopCarts.css">
+</head>
+
+<body>
+    <div class="market-header-outer-box">
+        <div class="market-header-inner-box cl">
+            <div class="market-header-left">
+                <span class="zr-photo  zr-photo-circle">
+                    <i class="zricon-user-empty"></i>
+                </span>
+                您好！<span>谭琨山</span>
+            </div>
+            <a href="javascript:" class="market-header-items">帮助中心</a>
+            <a href="javascript:" class="market-header-items">服务商工作台</a>
+            <a href="javascript:" class="market-header-items">商家工作台</a>
+        </div>
+    </div>
+    <div class="market-toper-outer-box">
+        <div class="market-toper-inner-box cl">
+            <div class="market-toper-logo"></div>
+        </div>
+    </div>
+    <div class="comm-content_wrap_1" id="cart_lists">
+        <div class="shop_cart_list">
+            <ul class="shop_lt_hd">
+                <li class="hd_item t-checkbox f-tal">
+                    <el-checkbox v-model="isSelContrl.selAll" @change="handleCheckAll">全选</el-checkbox>
+                </li>
+                <li class="hd_item">商品</li>
+                <li class="hd_item">数量</li>
+                <li class="hd_item">单价</li>
+                <li class="hd_item">金额</li>
+                <li class="hd_item">操作</li>
+            </ul>
+            <div class="shop_lt_bd">
+                <div class="cart-item-list" v-for="(shop,index) in cartList">
+                    <div class="shop">
+                        <div class="cart-checkbox">
+                            <el-checkbox v-model="shop.checked" @change="handleCheckShopChg(shop)"/>
+                        </div>
+                        <span class="shop-txt">{{shop.shopName}}</span>
+                    </div>
+                    <div class="item-item" v-for="(skus,idx) in shop.items">
+                        <div class="cell p-checkbox">
+                            <el-checkbox v-model="skus.checked" :disabled="skus.isAble === 0"/>
+                        </div>
+                        <div class="cell p-goods">
+                            <div class="p-img">
+                                <a href="">
+                                    <img :src="skus.mainPicUrl">
+                                </a>
+                            </div>
+                            <div class="p-name">
+                                <span class="g-tit">{{skus.skuGoods.skuName}}<span class="icon_type" v-if="skus.isSupTraMode">租</span></span>
+                                <span class="g-typ">{{skus.serviceType}}</span>
+                                <span class="g-dat">{{skus.serviceTime}}</span>
+                            </div>
+                        </div>
+                        <div class="cell p-num">
+                            <el-input-number 
+                                size="mini" 
+                                v-model="skus.amount" 
+                                :min="skus.skuGoods.leaseMinQty" 
+                                :max="skus.skuGoods.leaseAbleQty"/>
+                        </div>
+                        <div class="cell p-price">
+                            <strong>￥{{skus.skuGoods.salePrice.toFixed(2)}}</strong>
+                        </div>
+                        <div class="cell p-sum">
+                            <strong>￥{{skus.skuGoods.salePrice * skus.amount}}</strong>
+                        </div>
+                        <div class="cell p-ops">
+                            <a @click="deleteGood(shop,idx)">删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="shop_lt_ft">
+                <div class="fot_lt f-fl">
+                    <el-checkbox v-model="isSelContrl.selAll" @change="handleCheckAll">全选</el-checkbox>
+                    <span class="sel_remove" @click="deleteSelGoods">移除选中的商品</span>
+                </div>
+                <div class="fot_rt f-fr">
+                    <span class="sel_num">已选择商品：<span>{{computTotal.totalNum}}&nbsp件</span></span>
+                    <span class="sel_all_sum">商品总金额：<span>{{computTotal.totalPrice}}元</span></span>
+                    <el-button class="sel_pay" :type="isSelContrl.selHave ? 'primary' : 'info'" :disabled="!isSelContrl.selHave" @click="settleGoods">结算</el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="link">
+            <span><a href="#" class="alink">关于我们</a></span>
+            <span><a href="#" class="alink">联系我们</a></span>
+            <span><a href="#" class="alink">帮助中心</a></span>
+            <span><a href="#" class="alink">隐私政策</a></span>
+        </div>
+        <div class="copyright">
+            Copyright © 2004 - 2018 京东JD.com 版权所有
+        </div>
+
+
+        <script src="./vue/js/min/qs.min.js"></script>
+        <script src="./vue/js/min/axios.js"></script>
+        <script src="./vue/js/req.js"></script>
+        <script src="./vue/js/api.js"></script>
+        <script src="./vue/js/min/vue.min.js"></script>
+        <script src="./vue/js/min/element.js"></script>
+        <script>
+            new Vue({
+                el: '#cart_lists',
+                data: function() {
+                    return {
+                        cartList: []
+                    }
+                },
+                computed: {
+                    isSelContrl: function() {
+                        var arry=[];
+                        this.cartList.forEach(function(shop){
+                            arry.push.apply(arry, shop.items);
+                        });
+                        return { selAll: arry.every(function(val) { return val.checked }), selHave: arry.some(function(val) { return val.checked })}
+                    },
+                    computTotal () {
+                        // 计算总价 总件数 先把所有商品拼成一个数组 循环计算
+                        // 默认所有商品勾选
+                        var allPrice = 0, allNums = 0, arry=[];
+                        this.cartList.forEach(function(shop){
+                            arry.push.apply(arry, shop.items);
+                        });
+                        var _cartList_ = arry.filter(function(val) { return val.checked }),
+                            totalPrice = 0,
+                            totalNum = 0;
+                        for (var i = 0; i < _cartList_.length; i++) {
+                            totalPrice += _cartList_[i].amount * _cartList_[i].skuGoods.salePrice;
+                            totalNum += _cartList_[i].amount;
+                        }
+                        return { totalNum: totalNum, totalPrice: totalPrice }
+                    }
+                },
+                mounted () {
+                    this.qryCartLists();
+                },
+                methods: {
+                    // 全选
+                    handleCheckAll (val) {
+                        var _this_ = this;
+                        this.cartList.forEach(function(shop){
+                            shop.checked = val;
+                            _this_.handleCheckShopChg(shop);
+                        });
+                    },
+                    // 选中店铺
+                    handleCheckShopChg (shop) {
+                        var _this_ = this;
+                        shop.items.forEach(function(good){
+                            good.checked = good.isAble && shop.checked;
+                        });
+                    },
+                    // 查购物车列表数据
+                    qryCartLists() {
+                        var _this_ = this;
+                        api.qryCartLists().then(function(resp) {
+                            _this_.cartList = resp;
+                            _this_.cartList.map(function(shop) {
+                                _this_.$set(shop, 'checked', true);
+                                shop.items.map(function(good) {
+                                    _this_.$set(good, 'checked', good.isAble === 1);
+                                    _this_.$set(good, 'isSupTraMode', (good.tradeMode+'').indexOf(1) !== -1);
+                                    _this_.$set(good, 'serviceType', good.properties.split(' ')[0]);
+                                    _this_.$set(good, 'serviceTime', good.properties.split(' ')[1]);
+                                })
+                            });
+                        });
+                    },
+                    // 删除商品
+                    deleteGood (shop, idx) {
+                        var _this = this;
+                        shop.items.splice(idx, 1);
+                        api.deleteGood(shop.id).then(function(resp) {
+                            resp ? _this.qryCartLists() : '';
+                        });
+                    },
+                    // 移除选中商品
+                    deleteSelGoods () {
+                        var _this_ = this;
+                        this.cartList.forEach(function(shop,idx){
+                            shop.items = shop.items.filter(function(item) { return !item.checked })
+                            shop.items.length <= 0 ? _this_.cartList.splice(idx, 1) : '';
+                        });
+                    },
+                    settleGoods () {
+                        var arry = [], sel_goods_arr = [];
+                        this.cartList.forEach(function(shop){
+                            var obj = {
+                                shopNo: shop.shopNo,
+                                shopName: shop.shopName,
+                                items: []
+                            }
+                            obj.items = shop.items.filter(function(item) { return item.checked })
+                            if (obj.items.length > 0) {
+                                sel_goods_arr.push(obj);
+                            }
+                        });
+                        sessionStorage.setItem('skuGoods', JSON.stringify(sel_goods_arr));
+                        window.open('http://127.0.0.1:8080/1_shoppingForm.html');
+                    }
+                }
+            })
+        </script>
+    </div>
+</body>
+
+</html>

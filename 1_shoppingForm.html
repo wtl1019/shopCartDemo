@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>确认订单</title>
+    <link type="text/css" rel="stylesheet" href="http://storage.jd.com/1.3.3/zr/css/cdn_zr.min.css" />
+    <link rel="stylesheet" href="css/main.css">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/shopCarts.css">
+    <style type="text/css">
+        .el-radio-group{
+            width: 80%;
+        }
+        .el-radio-group .el-radio-button{
+            width:  238px !important;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="market-header-outer-box">
+        <div class="market-header-inner-box cl">
+            <div class="market-header-left">
+                <span class="zr-photo  zr-photo-circle">
+                    <i class="zricon-user-empty"></i>
+                </span>
+                您好！<span>谭琨山</span>
+            </div>
+            <a href="javascript:" class="market-header-items">帮助中心</a>
+            <a href="javascript:" class="market-header-items">服务商工作台</a>
+            <a href="javascript:" class="market-header-items">商家工作台</a>
+        </div>
+    </div>
+    <div class="market-toper-outer-box">
+        <div class="market-toper-inner-box cl">
+            <div class="market-toper-logo"></div>
+        </div>
+    </div>
+    <div class="comm-content_wrap_1" id="submit_order">
+        <div class="shop_cart_form">
+            <div class="cust_inf_hd">
+                <span class="line"></span><span class="txt">买家</span>
+            </div>
+            <el-form :model="form" :rules="rules" ref="form" label-width="100px">
+                <div class="cus_inf_cont">
+                    <div class="comm_form_item" style="border-bottom: none;">
+                        <label>公司名称</label>
+                        <div class="comm_form_item_cont">
+                            <span>{{baseInfo.buyerSubjectName}}</span>
+                        </div>
+                    </div>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item label="联系人姓名" prop="consignee">
+                                <el-input size="mini" v-model="form.consignee"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item label="联系人手机" prop="consigneeMobile">
+                                <el-input size="mini" v-model="form.consigneeMobile"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </div>
+                <div class="shop_cart_list">
+                    <ul class="shop_form_hd">
+                        <li class="hd_item">商品</li>
+                        <li class="hd_item">数量</li>
+                        <li class="hd_item">单价</li>
+                        <li class="hd_item">金额</li>
+                    </ul>
+
+
+                    <div class="shop_form_bd">
+                        <div class="cart-item-list" v-for="(shop,idx) in submtGoods">
+                            <div class="shop">
+                                <span class="shop-txt">{{shop.shopName}}</span>
+                            </div>
+                            <div class="item-item" :class="{ bg_not_sel: !good.isSupTraMode }" v-for="good in shop.items">
+                                <div class="cell p-goods">
+                                    <div class="p-img">
+                                        <a href=""><img :src="good.mainPicUrl"></a>
+                                    </div>
+                                    <div class="p-name">
+                                        <span class="g-tit">{{good.skuGoods.skuName}}</span>
+                                        <span class="g-typ">{{good.serviceType}}</span>
+                                        <span class="g-dat">{{good.serviceTime}}</span>
+                                    </div>
+                                </div>
+                                <div class="cell p-quantity">
+                                    <strong>{{good.amount}}</strong>
+                                </div>
+                                <div class="cell p-price">
+                                    <strong>￥{{good.skuGoods.salePrice}}</strong>
+                                </div>
+                                <div class="cell p-sum">
+                                    <strong>￥{{good.amount * good.skuGoods.salePrice}}</strong>
+                                </div>
+                            </div>
+                            <div class="comm_form_item">
+                                <div class="comm_form_item_cont">
+                                    <el-form-item label="租赁日期" :prop="'dateRange'+idx">
+                                        <el-date-picker
+                                            v-model="form['dateRange'+idx]"
+                                            type="daterange"
+                                            range-separator="至"
+                                            start-placeholder="开始日期"
+                                            end-placeholder="结束日期"
+                                            value-format="yyyy-MM-dd">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                </div>
+                            </div>
+                            <div class="comm_form_item">
+                                <!-- <label>订单备注</label> -->
+                                <div class="comm_form_item_cont">
+                                    <el-form-item label="订单备注" :prop="'buyerMsg'+idx">
+                                        <el-input
+                                           style="width: 350px;"
+                                           type="textarea"
+                                           :rows="2"
+                                           placeholder="请输入内容"
+                                           v-model="form['buyerMsg'+idx]">
+                                        </el-input>
+                                    </el-form-item>
+                                </div>
+                            </div>
+                            <div class="comm_form_item">
+                                <el-form-item label="交易方式" :prop="'tradeMode'+idx">
+                                    <el-radio-group v-model="form['tradeMode' + idx]" @change="chgTradeMode(idx, form['tradeMode' + idx])">
+                                        <el-radio-button label="1">
+                                            <span>担保交易</span></br>
+                                            <span style="line-height: 20px;">先款后货，买家支付后货款冻结</span></br>
+                                            <span>确认完成后货款打至卖家账户。</span>
+                                        </el-radio-button>
+                                        <el-radio-button label="2" >
+                                            <span>担保交易</span></br>
+                                            <span style="line-height: 20px;">先款后货，买家支付后货款冻结</span></br>
+                                            <span>确认完成后货款打至卖家账户。</span>
+                                        </el-radio-button>
+                                    </el-radio-group>
+                                </el-form-item>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="shop_lt_ft">
+                        <div class="fot_lt f-fl">
+                            <span class="place_blank"></span>
+                            <span class="sel_remove" @click="goCartListPage">返回购物车</span>
+                        </div>
+                        <div class="fot_rt f-fr">
+                            <span class="sel_all_sum">应付总额：<span>{{totalPrice}}元</span></span>
+                            <el-button class="sel_pay" type="primary" @click="handleOk">提交订单</el-button>
+                        </div>
+                    </div>
+                </div>
+            </el-form>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="link">
+            <span><a href="#" class="alink">关于我们</a></span>
+            <span><a href="#" class="alink">联系我们</a></span>
+            <span><a href="#" class="alink">帮助中心</a></span>
+            <span><a href="#" class="alink">隐私政策</a></span>
+        </div>
+        <div class="copyright">
+            Copyright © 2004 - 2018 京东JD.com 版权所有
+        </div>
+    </div>
+    
+    <script src="./vue/js/min/qs.min.js"></script>
+        <script src="./vue/js/min/axios.js"></script>
+        <script src="./vue/js/req.js"></script>
+        <script src="./vue/js/api.js"></script>
+        <script src="./vue/js/min/vue.min.js"></script>
+        <script src="./vue/js/min/element.js"></script>
+        <script>
+            new Vue({
+                el: '#submit_order',
+                data: function() {
+                    return {
+                        baseInfo: {},
+                        submtGoods: [],
+                        form: this.getDefaultForm(),
+                        rules: this.getDefaultRules(),
+                    }
+                },
+                computed: {
+                    totalPrice () {
+                        // 计算总价 总件数 先把所有商品拼成一个数组 循环计算isSupTraMode
+                        var arry=[];
+                        this.submtGoods.forEach(function(shop){
+                            arry.push.apply(arry, shop.items);
+                        });
+                        var subList = arry.filter(function(val) { return val.isSupTraMode }),
+                            totalPrice = 0;
+                        for (var i = 0; i < subList.length; i++) {
+                            totalPrice += subList[i].amount * subList[i].skuGoods.salePrice;
+                        }
+                        return totalPrice
+                    }
+                },
+                mounted() {
+                    this.getBaseInfo ();
+                    this.submtGoods = JSON.parse(sessionStorage.getItem('skuGoods'));
+                },
+                methods: {
+                    getDefaultForm () {
+                        const shops = JSON.parse(sessionStorage.getItem('skuGoods'));
+                        const form = {
+                            consignee: '',
+                            consigneeMobile: ''
+                        };
+                        for (let i = 0; i < shops.length; i++) {
+                            form['buyerMsg'+i] = '';
+                            form['dateRange'+i] = [];
+                            form['tradeMode'+i] = 1;
+                        }
+                        return form;
+                    },
+                    getDefaultRules () {
+                        const shops = JSON.parse(sessionStorage.getItem('skuGoods'));
+                        const rules_tmp = {
+                            consignee: [
+                                { required: true, message: '请输入联系人姓名', trigger: 'blur' }
+                            ],
+                            consigneeMobile: [
+                                { required: true, message: '请输入联系人手机', trigger: 'blur' },  
+                                { pattern: /^1\d{10}$/, message: '最输入正确手机', trigger: 'blur' }
+                            ]
+                        };
+                        for (let i = 0; i < shops.length; i++) {
+                            rules_tmp['dateRange'+i] = [
+                                { required: true, message: '请选择租赁日期', trigger: 'change' }
+                            ];
+                            rules_tmp['tradeMode'+i] = [
+                                { required: true, message: '请选择交易方式', trigger: 'change' }
+                            ];
+                        }
+                        return rules_tmp;
+                    },
+                    chgTradeMode (idx, val) {
+                        var _this_ = this;
+                        this.submtGoods.forEach(function(shop, order) {
+                            if (order == idx) {
+                                shop.items.forEach(function(good) {
+                                    var isSuprt = (good.tradeMode+'').indexOf(val) !== -1;
+                                    _this_.$set(good, 'isSupTraMode', isSuprt);
+                                    if (isSuprt) {
+                                        _this_.rules['dateRange' + idx] ? '' : _this_.rules['dateRange' + idx] = [
+                                            { required: true, message: '请选择租赁日期', trigger: 'change' }
+                                        ];
+                                    } else {
+                                        _this_.rules['dateRange' + idx] ? delete _this_.rules['dateRange' + idx] : '';
+                                    }
+                                })
+                            }
+                        })
+                    },
+                    // 获取公司信息
+                    getBaseInfo () {
+                        var _this_ = this;
+                        api.getBaseInfo().then(function(resp) {
+                            _this_.baseInfo = resp;
+                        });
+                    },
+                    toEnd () {
+                        // 处理发送数据
+                        var _this_ = this;
+                        var send_list = [];
+                        this.submtGoods.forEach(function(shop, idx){
+                            shop.items.forEach(function(item){
+                                if(item.isSupTraMode){
+                                    var obj = {
+                                        skuId: item.skuGoods.id,
+                                        amount: item.amount,
+                                        leaseStartDay: '',
+                                        leaseEndDay: '',
+                                        buyerMsg: _this_.form['buyerMsg'+idx],
+                                        tradeMode: _this_.form['tradeMode'+idx]
+                                    };
+                                    if (_this_.form['dateRange'+idx]) {
+                                        obj.leaseStartDay = _this_.form['dateRange'+idx][0];
+                                        obj.leaseEndDay = _this_.form['dateRange'+idx][1];
+                                    }
+                                    delete _this_.form['buyerMsg'+idx]
+                                    delete _this_.form['tradeMode'+idx]
+                                    delete _this_.form['dateRange'+idx]
+                                    send_list.push(obj);
+                                }
+                            });
+                        });
+                        return send_list;
+                    },
+                    // 提交订单
+                    handleOk () {
+                        var _this_ = this;
+                        if (!this.$refs.form) {
+                            return
+                        }
+                        this.$refs.form.validate(valid => {
+                            if (!valid) {
+                                return
+                            }
+                            this.form.orderToken = this.baseInfo.orderToken;
+                            this.form.totalPrice = this.totalPrice;
+                            this.form.list = this.toEnd();
+                            console.log(this.form);
+                            api.submitOrder(this.form).then(function(resp){
+                            });
+                            
+                        })
+                    },
+                    goCartListPage () {
+                        window.location.href = './1_shoppingList.html';
+                    }
+                }
+            })
+        </script>
+</body>
+
+</html>

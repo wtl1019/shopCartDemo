@@ -1,0 +1,223 @@
+.index-content .dialog_login {
+  position: absolute;
+  top: 212px;
+  left: 1322px;
+  /*1322px 要改*/
+  width: 260px;
+  height: 412px;
+  z-index: 99;
+  background: #fff;
+  -webkit-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.index-content .dialog_login .d_content {
+  padding: 0 16px;
+}
+.index-content .dialog_login .d_content .top_info {
+  margin: 20px 0;
+}
+.index-content .dialog_login .d_content .top_info .avatar {
+  float: left;
+  width: 48px;
+  height: 48px;
+  -webkit-border-radius: 50%;
+          border-radius: 50%;
+  margin-right: 8px;
+}
+.index-content .dialog_login .d_content .top_info span {
+  height: 48px;
+  line-height: 48px;
+  font-size: 12px;
+  color: #999;
+}
+.index-content .dialog_login .d_content .d_btns {
+  width: 100%;
+  height: 40px;
+  font-size: 0;
+  margin-bottom: 16px;
+}
+.index-content .dialog_login .d_content .d_btns span {
+  width: 108px;
+  height: 40px;
+  line-height: 40px;
+  -webkit-border-radius: 4px;
+          border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+}
+.index-content .dialog_login .d_content .d_btns .btn_log {
+  float: left;
+  color: #fff;
+  background: #4363F4;
+}
+.index-content .dialog_login .d_content .d_btns .btn_reg {
+  float: right;
+  background: #FFFFFF;
+  border: 1px solid #4363F4;
+  color: #4363F4;
+}
+.index-content .dialog_login .d_content .notice {
+  height: 32px;
+  line-height: 32px;
+  margin-bottom: 12px;
+}
+.index-content .dialog_login .d_content .notice .notice_tit {
+  display: inline-block;
+  height: 32px;
+  font-size: 14px;
+  border-bottom: 2px solid #4363F4;
+}
+.index-content .dialog_login .d_content .notice .more {
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 12px;
+  -webkit-transform: scale(0.857);
+      -ms-transform: scale(0.857);
+       -o-transform: scale(0.857);
+          transform: scale(0.857);
+}
+.index-content .dialog_login .d_content .notice_tips li.item {
+  height: 17px;
+  line-height: 17px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular;
+  letter-spacing: 0;
+  color: #666;
+  cursor: pointer;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+     text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.index-content .dialog_login .d_content .notice_tips li.item img {
+  margin-right: 4px;
+}
+.index-content .dialog_login .d_foot {
+  position: absolute;
+  bottom: 0;
+  width: 260px;
+  height: 110px;
+}
+.index-content .dialog_info {
+  position: absolute;
+  top: 212px;
+  left: 1011px;
+  /*1011px*/
+  width: 260px;
+  height: 412px;
+  z-index: 99;
+  background: #fff;
+  -webkit-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.index-content .dialog_info .d_content {
+  padding: 0 16px;
+}
+.index-content .dialog_info .d_content .top_info {
+  margin: 20px 0;
+}
+.index-content .dialog_info .d_content .top_info .avatar {
+  float: left;
+  width: 48px;
+  height: 48px;
+  -webkit-border-radius: 50%;
+          border-radius: 50%;
+  margin-right: 8px;
+}
+.index-content .dialog_info .d_content .top_info .tag_inf {
+  float: left;
+}
+.index-content .dialog_info .d_content .top_info .tag_inf span {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+}
+.index-content .dialog_info .d_content .d_tabs {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.index-content .dialog_info .d_content .d_tabs .line_s {
+  float: left;
+  width: 1px;
+  height: 32px;
+  background: #E0E0E0;
+  position: relative;
+  top: 5px;
+}
+.index-content .dialog_info .d_content .d_tabs .item {
+  float: left;
+  position: relative;
+  width: 56px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  cursor: pointer;
+  text-align: center;
+}
+.index-content .dialog_info .d_content .d_tabs .item span {
+  display: block;
+}
+.index-content .dialog_info .d_content .d_tabs .item .num {
+  line-height: 20px;
+  margin-bottom: 4px;
+  font-family: DINEngschrift;
+  font-size: 18px;
+  color: #EC3950;
+  letter-spacing: 0;
+}
+.index-content .dialog_info .d_content .d_tabs .item .desc {
+  line-height: 18px;
+  font-size: 13px;
+  color: #666;
+}
+.index-content .dialog_info .d_content .notice {
+  height: 32px;
+  line-height: 32px;
+  margin-bottom: 12px;
+}
+.index-content .dialog_info .d_content .notice .notice_tit {
+  display: inline-block;
+  height: 32px;
+  font-size: 14px;
+  border-bottom: 2px solid #4363F4;
+}
+.index-content .dialog_info .d_content .notice .more {
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 12px;
+  -webkit-transform: scale(0.857);
+      -ms-transform: scale(0.857);
+       -o-transform: scale(0.857);
+          transform: scale(0.857);
+}
+.index-content .dialog_info .d_content .notice_tips li.item {
+  height: 17px;
+  line-height: 17px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular;
+  letter-spacing: 0;
+  color: #666;
+  cursor: pointer;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+     text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.index-content .dialog_info .d_content .notice_tips li.item img {
+  margin-right: 4px;
+}
+.index-content .dialog_info .d_foot {
+  position: absolute;
+  bottom: 0;
+  width: 260px;
+  height: 110px;
+}
