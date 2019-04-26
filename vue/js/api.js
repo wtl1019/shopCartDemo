@@ -124,7 +124,7 @@
 			        	   	    leaseStartDay: 2018/2/22,
 			        	   	    leaseEndDay: 2019/3/33,
 			        	   	    mainPicUrl: '//img10.360buyimg.com/cms/s80x80_jfs/t27676/315/2372712442/278632/ecfcba0b/5bff90b2N11de8897.jpg',
-			        	   	    properties: '软件类型:极简版 图案:小猪佩奇 颜色:红色'
+			        	   	    properties: '软件类型：极简版 图案：小猪佩奇 颜色:红色'
 			        	    }
 	        	    	]
 	        	    },
@@ -179,14 +179,20 @@
 	        	return resp;
 	        }
 		},
+		// 拆单
+		splitOrder: async function (skuIds) {
+			const { code, data, message } = await req.post(this.__url_pre + '/order/splitOrder', { skuId: skuIds });
+		    if (code === 200) {
+		  	   return date;
+	        } else {
+	        	// TODO测试
+	        	var resp = ['1,2,3', '4'];
+	        	return resp;
+	        }
+		},
 		// 提交订单
 		submitOrder: async function (form) {
-			const { code, data, message } = await req.post(this.__url_pre + '/order/saveOrder', form);
-		    if (code === 200) {
-		  	   return true;
-	        } else {
-	        	return true;
-	        }
+			return await req.post(this.__url_pre + '/order/saveOrder', form);
 		}
 	}
 	return __CORE__;

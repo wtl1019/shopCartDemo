@@ -85,7 +85,7 @@
                                         <a href=""><img :src="good.mainPicUrl"></a>
                                     </div>
                                     <div class="p-name">
-                                        <span class="g-tit">{{good.skuGoods.skuName}}</span>
+                                        <span class="g-tit">{{good.skuGoods.skuName}}<span class="icon_type" v-if="good.isRent">租</span></span>
                                         <span class="g-typ">{{good.serviceType}}</span>
                                         <span class="g-dat">{{good.serviceTime}}</span>
                                     </div>
@@ -100,7 +100,7 @@
                                     <strong>￥{{good.amount * good.skuGoods.salePrice}}</strong>
                                 </div>
                             </div>
-                            <div class="comm_form_item">
+                            <div class="comm_form_item" v-if="shop.tradeType === 1">
                                 <div class="comm_form_item_cont">
                                     <el-form-item label="租赁日期" :prop="'dateRange'+idx">
                                         <el-date-picker
@@ -204,9 +204,49 @@
                         return totalPrice
                     }
                 },
-                mounted() {
+                created () {
+                    var _this_ = this;
+                    var skuGoods = JSON.parse(sessionStorage.getItem('skuGoods'));
+                    // 拆单
+                    var skus_map = { arry: [], map: {}};
+                    skuGoods.forEach(function(shop){
+                        shop.items.forEach(function(good){
+                            skus_map.arry.push(good.skuGoods.id)
+                            skus_map.map[good.skuGoods.id] = {
+                                shopNo: shop.shopNo,
+                                shopName: shop.shopName,
+                                good: good
+                            }
+                        })
+                    })
+                    console.log(skus_map.map);
+                    var shop_map = {};
+                    api.splitOrder(skus_map.arry).then((resp) => {
+                        // ['1,2', '4']
+                        resp.forEach((item) => {
+                            item.split(',').forEach((sku) => {
+                                if (!(shop_map[skus_map.map[sku].shopNo] instanceof Array)) {
+                                    shop_map[skus_map.map[sku].shopNo] = [];
+                                }
+                                shop_map[skus_map.map[sku].shopNo].push(skus_map.map[sku].good);
+                            })
+                        })
+                        console.log(shop_map);
+                        var render_data = [];
+                        for (var key in shop_map) {
+                            render_data.push({
+                                shopNo: key,
+                                shopName: skus_map.map[shop_map[key][0].skuGoods.id].shopName,
+                                tradeType: shop_map[key][0].tradeType,
+                                items: shop_map[key]
+                            })
+                        }
+                        console.log(render_data);
+                        _this_.submtGoods = render_data;
+                    });
+                },
+                mounted () {
                     this.getBaseInfo ();
-                    this.submtGoods = JSON.parse(sessionStorage.getItem('skuGoods'));
                 },
                 methods: {
                     getDefaultForm () {
@@ -242,6 +282,9 @@
                             ];
                         }
                         return rules_tmp;
+                    },
+                    splitOrder () {
+                        
                     },
                     chgTradeMode (idx, val) {
                         var _this_ = this;
@@ -310,9 +353,8 @@
                             this.form.totalPrice = this.totalPrice;
                             this.form.list = this.toEnd();
                             console.log(this.form);
-                            api.submitOrder(this.form).then(function(resp){
+                            api.submitOrder(this.form).then(function({ code, data, message }){
                             });
-                            
                         })
                     },
                     goCartListPage () {

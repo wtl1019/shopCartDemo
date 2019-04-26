@@ -61,7 +61,7 @@
                                 </a>
                             </div>
                             <div class="p-name">
-                                <span class="g-tit">{{skus.skuGoods.skuName}}<span class="icon_type" v-if="skus.isSupTraMode">租</span></span>
+                                <span class="g-tit">{{skus.skuGoods.skuName}}<span class="icon_type" v-if="skus.isRent">租</span></span>
                                 <span class="g-typ">{{skus.serviceType}}</span>
                                 <span class="g-dat">{{skus.serviceTime}}</span>
                             </div>
@@ -85,8 +85,6 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="shop_lt_ft">
                 <div class="fot_lt f-fl">
                     <el-checkbox v-model="isSelContrl.selAll" @change="handleCheckAll">全选</el-checkbox>
@@ -179,6 +177,7 @@
                                 _this_.$set(shop, 'checked', true);
                                 shop.items.map(function(good) {
                                     _this_.$set(good, 'checked', good.isAble === 1);
+                                    _this_.$set(good, 'isRent', (good.tradeMode+'').indexOf(1) !== -1);
                                     _this_.$set(good, 'isSupTraMode', (good.tradeMode+'').indexOf(1) !== -1);
                                     _this_.$set(good, 'serviceType', good.properties.split(' ')[0]);
                                     _this_.$set(good, 'serviceTime', good.properties.split(' ')[1]);
